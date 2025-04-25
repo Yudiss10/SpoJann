@@ -31,7 +31,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.blue, // Header warna biru biasa
+        backgroundColor: Colors.blue, // Header warna biru
         title: Row(
           children: [
             const Icon(Icons.music_note, color: Colors.white), // Music icon warna putih
@@ -96,7 +96,40 @@ class _HomePageState extends State<HomePage> {
                         )
                       : const SizedBox(key: ValueKey('emptySpace')), // Placeholder kosong jika tidak mencari
                 ),
-                // Judul Album
+                // Banner di atas Album
+                Container(
+                  padding: const EdgeInsets.all(16.0),
+                  color: Colors.lightBlue, // Warna latar belakang banner berbeda dengan header
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info, color: Colors.white, size: 40), // Ikon di banner
+                      const SizedBox(width: 16.0), // Spasi antara ikon dan teks
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              'Welcome to SpoJann!',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18.0,
+                              ),
+                            ),
+                            SizedBox(height: 4.0),
+                            Text(
+                              'Discover your favorite music and albums here.',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 14.0,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
@@ -131,7 +164,6 @@ class _HomePageState extends State<HomePage> {
                     );
                   }),
                 ),
-                // Judul Music
                 const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                   child: Text(
@@ -174,7 +206,7 @@ class _HomePageState extends State<HomePage> {
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
-                margin: const EdgeInsets.only(bottom: 80.0), // Di bawah tombol Add
+                margin: const EdgeInsets.only(bottom: 8.0), // Jarak 8px dari Bottom Navigation Bar
                 padding: const EdgeInsets.all(12.0),
                 decoration: BoxDecoration(
                   color: Colors.grey[900], // Warna latar belakang kotak
@@ -244,15 +276,35 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
+          // Tombol Add di atas kotak musik
+          if (_currentPlayingMusic != null)
+            Positioned(
+              bottom: 140.0, // Di atas kotak musik
+              right: 16.0,
+              child: FloatingActionButton(
+                onPressed: () {
+                  // Logika untuk tombol Add
+                  print('Add button pressed');
+                },
+                backgroundColor: Colors.blue,
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
+          // Tombol Add di kanan bawah jika tidak ada musik
+          if (_currentPlayingMusic == null)
+            Positioned(
+              bottom: 16.0,
+              right: 16.0,
+              child: FloatingActionButton(
+                onPressed: () {
+                  // Logika untuk tombol Add
+                  print('Add button pressed');
+                },
+                backgroundColor: Colors.blue,
+                child: const Icon(Icons.add, color: Colors.white),
+              ),
+            ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // Logika untuk tombol Add
-          print('Add button pressed');
-        },
-        backgroundColor: Colors.blue,
-        child: const Icon(Icons.add, color: Colors.white),
       ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex, // Indeks tab yang dipilih
