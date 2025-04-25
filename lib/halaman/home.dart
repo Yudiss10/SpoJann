@@ -10,6 +10,22 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   bool _isSearching = false; // Untuk mengontrol apakah kotak pencarian ditampilkan
   final TextEditingController _searchController = TextEditingController();
+  int _selectedIndex = 0; // Untuk mengontrol navigasi bottom bar
+  String? _currentPlayingMusic; // Untuk menyimpan musik yang sedang diputar
+
+  // Fungsi untuk menangani perubahan tab di Bottom Navigation Bar
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  // Fungsi untuk menangani klik pada musik
+  void _playMusic(String musicTitle) {
+    setState(() {
+      _currentPlayingMusic = musicTitle; // Set musik yang sedang diputar
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -41,256 +57,227 @@ class _HomePageState extends State<HomePage> {
           ),
         ],
       ),
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: const BoxDecoration(
-                color: Colors.blue, // Header drawer warna biru
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Icon(Icons.music_note, size: 50, color: Colors.white), // Ikon besar
-                  SizedBox(height: 8.0),
-                  Text(
-                    'SpoJann Menu',
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white, // Teks putih
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              leading: const Icon(Icons.home, color: Colors.blue),
-              title: const Text('Home'),
-              onTap: () {
-                Navigator.pop(context); // Tutup drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.library_music, color: Colors.blue),
-              title: const Text('Library'),
-              onTap: () {
-                Navigator.pop(context); // Tutup drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.settings, color: Colors.blue),
-              title: const Text('Settings'),
-              onTap: () {
-                Navigator.pop(context); // Tutup drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.info, color: Colors.blue),
-              title: const Text('About'),
-              onTap: () {
-                Navigator.pop(context); // Tutup drawer
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.logout, color: Colors.blue),
-              title: const Text('Logout'),
-              onTap: () {
-                Navigator.pop(context); // Tutup drawer
-              },
-            ),
-          ],
-        ),
-      ),
-      body: Column(
+      body: Stack(
         children: [
-          // Kotak pencarian dengan animasi
-          AnimatedSwitcher(
-            duration: const Duration(milliseconds: 300), // Durasi animasi
-            transitionBuilder: (Widget child, Animation<double> animation) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(0.0, -1.0), // Mulai dari atas
-                  end: Offset.zero, // Berakhir di posisi normal
-                ).animate(animation),
-                child: child,
-              );
-            },
-            child: _isSearching
-                ? Padding(
-                    key: const ValueKey('searchBox'),
-                    padding: const EdgeInsets.all(8.0),
-                    child: TextField(
-                      controller: _searchController,
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        prefixIcon: const Icon(Icons.search),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        // Logika pencarian dapat ditambahkan di sini
-                        print('Searching for: $value');
-                      },
-                    ),
-                  )
-                : const SizedBox(key: ValueKey('emptySpace')), // Placeholder kosong jika tidak mencari
-          ),
-          // Judul Album
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Album',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline, // Garis bawah
-                ),
-              ),
-            ),
-          ),
-          // Grid Album (2x2)
-          Expanded(
-            flex: 1,
-            child: GridView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2, // 2 kolom
-                crossAxisSpacing: 8.0,
-                mainAxisSpacing: 8.0,
-              ),
-              itemCount: 4, // Jumlah album
-              itemBuilder: (context, index) {
-                return Container(
-                  decoration: BoxDecoration(
-                    color: Colors.grey[900],
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Album ${index + 1}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-          // Judul Music
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                'Music',
-                style: TextStyle(
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  decoration: TextDecoration.underline, // Garis bawah
-                ),
-              ),
-            ),
-          ),
-          // Kotak Music
-          Expanded(
-            flex: 1,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              itemCount: 4, // Jumlah musik
-              itemBuilder: (context, index) {
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 8.0),
-                  width: double.infinity, // Memenuhi lebar layar
-                  height: 100, // Tinggi kotak musik
-                  decoration: BoxDecoration(
-                    color: Colors.grey[900],
-                    borderRadius: BorderRadius.circular(8.0),
-                  ),
-                  child: Center(
-                    child: Text(
-                      'Music ${index + 1}',
-                      style: const TextStyle(color: Colors.white),
-                    ),
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class MusicTile extends StatelessWidget {
-  final IconData icon;
-  final String songTitle;
-  final String artist;
-
-  const MusicTile({
-    super.key,
-    required this.icon,
-    required this.songTitle,
-    required this.artist,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 8.0),
-      padding: const EdgeInsets.all(16.0),
-      decoration: BoxDecoration(
-        color: Colors.grey[900], // Warna kotak lebih gelap
-        borderRadius: BorderRadius.circular(8.0),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            size: 40,
-            color: Colors.blue, // Ikon berwarna biru
-          ),
-          const SizedBox(width: 16.0),
-          Expanded(
+          SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  songTitle,
-                  style: const TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white, // Teks putih
+                // Kotak pencarian dengan animasi
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300), // Durasi animasi
+                  transitionBuilder: (Widget child, Animation<double> animation) {
+                    return SlideTransition(
+                      position: Tween<Offset>(
+                        begin: const Offset(0.0, -1.0), // Mulai dari atas
+                        end: Offset.zero, // Berakhir di posisi normal
+                      ).animate(animation),
+                      child: child,
+                    );
+                  },
+                  child: _isSearching
+                      ? Padding(
+                          key: const ValueKey('searchBox'),
+                          padding: const EdgeInsets.all(8.0),
+                          child: TextField(
+                            controller: _searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Search...',
+                              prefixIcon: const Icon(Icons.search),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                            ),
+                            onChanged: (value) {
+                              // Logika pencarian dapat ditambahkan di sini
+                              print('Searching for: $value');
+                            },
+                          ),
+                        )
+                      : const SizedBox(key: ValueKey('emptySpace')), // Placeholder kosong jika tidak mencari
+                ),
+                // Judul Album
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    'Album',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline, // Garis bawah
+                    ),
                   ),
                 ),
-                Text(
-                  artist,
-                  style: const TextStyle(
-                    fontSize: 14.0,
-                    color: Colors.grey, // Teks abu-abu
+                // Grid Album (2x2)
+                GridView.count(
+                  physics: const NeverScrollableScrollPhysics(), // Non-scrollable
+                  shrinkWrap: true, // Agar GridView menyesuaikan tinggi konten
+                  crossAxisCount: 2, // 2 kolom
+                  crossAxisSpacing: 8.0,
+                  mainAxisSpacing: 8.0,
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  children: List.generate(4, (index) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        color: Colors.grey[900],
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Album ${index + 1}',
+                          style: const TextStyle(color: Colors.white),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+                // Judul Music
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text(
+                    'Music',
+                    style: TextStyle(
+                      fontSize: 18.0,
+                      fontWeight: FontWeight.bold,
+                      decoration: TextDecoration.underline, // Garis bawah
+                    ),
                   ),
+                ),
+                // Kotak Music
+                Column(
+                  children: List.generate(4, (index) {
+                    return GestureDetector(
+                      onTap: () => _playMusic('Music ${index + 1}'), // Klik untuk memutar musik
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                        width: double.infinity, // Memenuhi lebar layar
+                        height: 100, // Tinggi kotak musik
+                        decoration: BoxDecoration(
+                          color: Colors.grey[900],
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: Center(
+                          child: Text(
+                            'Music ${index + 1}',
+                            style: const TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
                 ),
               ],
             ),
           ),
-          const Icon(
-            Icons.play_arrow,
-            size: 30,
-            color: Colors.blue, // Ikon play berwarna biru
+          // Kotak Musik yang Sedang Diputar
+          if (_currentPlayingMusic != null)
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 80.0), // Di bawah tombol Add
+                padding: const EdgeInsets.all(12.0),
+                decoration: BoxDecoration(
+                  color: Colors.grey[900], // Warna latar belakang kotak
+                  borderRadius: BorderRadius.circular(12.0), // Border radius
+                  border: Border.all(color: Colors.white, width: 2.0), // Border putih dengan 2px
+                ),
+                width: MediaQuery.of(context).size.width * 0.9, // Lebar kotak 90% dari layar
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.music_note, color: Colors.white, size: 40), // Ikon musik
+                            const SizedBox(width: 8.0),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  _currentPlayingMusic ?? '',
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                                const Text(
+                                  'Artist Name', // Nama artist
+                                  style: TextStyle(
+                                    color: Colors.grey,
+                                    fontSize: 14.0,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                        const Text(
+                          '0:00 / 3:45', // Waktu musik
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 14.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8.0),
+                    // Garis penanda progress musik
+                    Stack(
+                      children: [
+                        Container(
+                          height: 4.0,
+                          width: double.infinity,
+                          color: Colors.grey, // Warna background progress
+                        ),
+                        Container(
+                          height: 4.0,
+                          width: 100.0, // Panjang progress musik
+                          color: Colors.blue, // Warna progress
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+        ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Logika untuk tombol Add
+          print('Add button pressed');
+        },
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add, color: Colors.white),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex, // Indeks tab yang dipilih
+        onTap: _onItemTapped, // Fungsi untuk menangani perubahan tab
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: 'Home',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.library_music),
+            label: 'Music',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.album),
+            label: 'Album',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: 'Account',
           ),
         ],
+        selectedItemColor: Colors.white, // Warna item yang dipilih (ikon dan teks)
+        unselectedItemColor: Colors.white, // Warna item yang tidak dipilih (ikon dan teks)
+        backgroundColor: Colors.blue, // Warna latar belakang navigasi bawah
       ),
     );
   }
